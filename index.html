@@ -1,0 +1,124 @@
+<!DOCTYPE html> 
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Automated Chicken Feeder & Monitoring</title>
+    <!-- Link to the external CSS file -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header>
+    Automated Chicken Feeder & Monitoring System
+</header>
+
+<div class="container">
+    <div class="section">
+        <h2>Feed Level Monitoring</h2>
+        <div class="card">
+            <h3>Current Feed Level:</h3>
+            <p id="feed-level" class="status" aria-live="polite">Loading...</p>
+            <p id="feed-alert" class="alert" style="display: none;">Warning: Feed level is low! Please refill.</p>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Set Feeding Schedule</h2>
+        <div class="card">
+            <label for="feeding-time">Enter Feeding Time</label>
+            <input type="datetime-local" id="feeding-time" required>
+            
+            <label for="feed-quantity">Feed Quantity (kilograms)</label>
+            <input type="number" id="feed-quantity" min="50" max="1500" required>
+
+            <button id="set-schedule">Set Feeding Schedule</button>
+            <p id="schedule-confirmation">Schedule set successfully!</p>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Feed Now</h2>
+        <div class="card">
+            <label for="feed-now-quantity">Feed Quantity (kilograms)</label>
+            <input type="number" id="feed-now-quantity" min="50" max="1500" required>
+            <button id="feed-now">Feed Now</button>
+            <p id="feed-now-confirmation">Feed dispensed successfully!</p>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Temperature Monitoring</h2>
+        <div class="card">
+            <h3>Current Temperature in Chicken Coop:</h3>
+            <p id="coop-temperature" class="status" aria-live="polite">Loading...</p>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>CCTV Live Monitoring</h2>
+        <div class="card">
+            <h3>Chicken Coop Live Stream:</h3>
+            <iframe class="cctv" src="http://your-cctv-ip-address/live" frameborder="0" allowfullscreen></iframe>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    let feedLevel = 1500;
+
+    const feedLevelElement = document.getElementById('feed-level');
+    const feedAlertElement = document.getElementById('feed-alert');
+    
+    function updateFeedLevelDisplay() {
+        feedLevelElement.textContent = `${feedLevel} kilograms available`;
+        feedAlertElement.style.display = feedLevel < 500 ? 'block' : 'none';
+    }
+    updateFeedLevelDisplay();
+
+    const scheduleButton = document.getElementById('set-schedule');
+    const scheduleConfirmation = document.getElementById('schedule-confirmation');
+    
+    scheduleButton.addEventListener('click', function() {
+        const feedingTime = document.getElementById('feeding-time').value;
+        const feedQuantity = document.getElementById('feed-quantity').value;
+        
+        if (feedingTime && feedQuantity) {
+            scheduleConfirmation.style.display = 'block';
+            setTimeout(() => scheduleConfirmation.style.display = 'none', 3000);
+        } else {
+            alert('Please fill in both feeding time and quantity');
+        }
+    });
+
+    const feedNowButton = document.getElementById('feed-now');
+    const feedNowConfirmation = document.getElementById('feed-now-confirmation');
+    
+    feedNowButton.addEventListener('click', function() {
+        const feedNowQuantity = document.getElementById('feed-now-quantity').value;
+        
+        if (feedNowQuantity) {
+            feedLevel -= feedNowQuantity;
+            feedLevel = Math.max(feedLevel, 0);
+            updateFeedLevelDisplay();
+            
+            feedNowConfirmation.style.display = 'block';
+            setTimeout(() => feedNowConfirmation.style.display = 'none', 3000);
+        } else {
+            alert('Please enter feed quantity');
+        }
+    });
+
+    const coopTemperatureElement = document.getElementById('coop-temperature');
+    function updateTemperatureDisplay() {
+        const coopTemperature = (Math.random() * 10 + 20).toFixed(1); // Random between 20-30°C
+        coopTemperatureElement.textContent = `${coopTemperature}°C`;
+    }
+    setInterval(updateTemperatureDisplay, 10000);
+    updateTemperatureDisplay();
+});
+</script>
+
+</body>
+</html>
